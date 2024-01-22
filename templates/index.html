@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap"  >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>StockView</title>
+</head>
+
+<body>
+   
+   
+    
+
+
+
+            
+       
+<div class="container">
+    <form id="tickerInput" class="tickerForm" method="POST" action="/stock_data">
+        <h1>Wall Street View</h1>
+        <div id="searchDiv" >
+            <div>
+
+                <label for="searchInput">Search for a company:</label>
+                <input type="text" id="searchInput" oninput="updateList()" required size="50">
+                <br>
+                <div class="scroll-box">
+                    <ol id="companyList"></ol>
+                </div>
+            </div>
+            <br>
+            <div>
+                <label for="searchOutput">Company ticker name:</label>
+                <input type="text" id="searchOutput" name="searchOutput"  readonly required>
+                <br><br>
+                <button type="submit" id="submitBtn" value="Run">Submit</button>
+            </div>
+        </div>
+
+    </form>
+</div>
+
+     <script>
+
+            
+            const searchInput = document.getElementById('searchInput');
+            const companyList = document.getElementById('companyList');
+
+            var allCompanyData = {{ allCompanyData | tojson | safe }};
+            var tickerName = " ";
+        
+        window.addEventListener('pageshow', function (event) {
+        var form = document.getElementById('tickerInput');
+        form.reset();
+        document.getElementById('searchInput').value = ''; // Clear the search input
+       
+     
+        
+        });
+
+        
+
+        document.addEventListener('DOMContentLoaded', function () {
+        var form = document.getElementById('tickerInput');
+        form.reset();
+      
+        document.getElementById('searchInput').value = '';
+        document.getElementById('companyList').innerHTML = '';
+
+        form.addEventListener('submit', function (event) {
+
+        validateForm(); 
+        
+     });
+    });
+
+
+
+        function validateForm() {
+            const form = document.getElementById("tickerInput");
+
+            if (form.checkValidity()&& searchOutput.value!=="") {
+                
+                return;
+                // alert("Form is valid! Submitting...");
+                // Additional logic to submit the form
+            } else {
+                alert("Form is not valid. Please select a company from the list below.");
+                form.reset();
+                event.preventDefault()
+
+            }
+        }
+
+       
+
+        function updateList() {
+            const searchTerm = searchInput.value.toLowerCase(); 
+
+            companyList.innerHTML = '';
+            
+            const filteredCompanies = allCompanyData.filter(company => company[1].toLowerCase().includes(searchTerm));
+
+            filteredCompanies.forEach(company => {
+                const listItem = document.createElement('li');
+                listItem.textContent = company[1];
+                listItem.addEventListener('click', () => onCompanySelected(company));
+                companyList.appendChild(listItem);
+            });
+        }
+
+        function onCompanySelected(company) {
+            const searchOutput = document.getElementById('searchOutput');
+            searchOutput.value = company[0];
+
+          
+
+            const companyList = document.getElementById('companyList');
+            
+            const searchInput = document.getElementById('searchInput');
+            searchInput.value = company[1];
+
+        }
+
+        
+
+        
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,68 @@
+body {
+    font-family: 'Courier New', Courier, monospace, sans-serif;
+    line-height: 1.6;
+    color: #333;
+}
+
+h1, h2, h3 {
+    font-family: 'Courier New', Courier, monospace, sans-serif;
+    color: green;
+    text-align: center;
+}
+
+/* Table styling */
+table {
+    width: 80%;
+    border-collapse: collapse;
+    margin: 20px auto;
+    border: 2px solid green;
+}
+
+th, td {
+    border: 2px solid green;
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: grey;
+}
+
+/* Common styles for chart containers*/
+.chart-container {
+    width: 90%;
+    max-width: 90%;
+    height: auto;
+    border: 2px solid green;
+    padding: 20px;
+    text-align: center;
+    margin-top: 20px;
+    margin-left: 30px;
+
+}
+
+#todaysSection {
+    text-align: center;
+    margin-top: 20px;
+}
+
+/* Specific styles for individual chart containers */
+#todaysPlot, #todaysVolume, #historyPlot, #divPlot, #insHolderPieChart, #mutualFundHoldersPieChart {
+    width: 90%;
+    margin: 0 auto;
+    text-align: center;
+}
+
+/* Media queries for responsiveness */
+@media only screen and (max-width: 768px) {
+    #todaysPlot, #todaysVolume, #historyPlot, #divPlot, #insHolderPieChart, #mutualFundHoldersPieChart {
+        width: 100%;
+        max-width: 100%;
+    }
+}
+
+@media only screen and (max-width: 480px) {
+    table {
+        width: 100%;
+    }
+}

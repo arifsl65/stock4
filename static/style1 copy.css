@@ -1,0 +1,133 @@
+
+
+body {
+  
+    font-family:'Courier New', Courier, monospace, sans-serif;
+    line-height: 1.6;
+    color: #333;
+}
+
+/* .container {
+    max-width: 1200px;
+    margin: 0 auto;
+} */
+
+
+
+h1, h2, h3 {
+    
+
+    font-family:'Courier New', Courier, monospace,sans-serif;
+
+    color: green;
+    text-align: center;
+}
+
+
+
+
+
+
+/* Table styling */
+table {
+    width: 80%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    border-color: green;
+    padding: 30%;
+    margin: 0 auto;
+}
+
+th, td {
+    border: 2px solid green;
+    padding: 8px;
+    text-align: left;
+    border-color: green;
+
+}
+
+th {
+    background-color: grey;
+}
+
+
+#todaysSection {
+    text-align: center; /* Center the content horizontally */
+    margin-top: 20px; /* Add some top margin for spacing */
+}
+
+#todaysPlot {
+    width: 90%;
+    margin: 0 auto; /* Center the plot horizontally within its container */
+    height: auto;
+    border: 2px solid green;
+    padding: 20px; 
+
+
+}
+
+#todaysVolume {
+    width: 90%; /* Adjust the width of the volume container */
+    margin: 0 auto; /* Center the volume chart horizontally within its container */
+    margin-top: 20px; /* Add some top margin for spacing */
+    height: auto;
+    border: 2px solid green; 
+    padding: 20px; 
+
+
+
+}
+
+
+#historySection {
+    text-align: center; /* Center the content horizontally */
+    margin-top: 20px; /* Add some top margin for spacing */
+}
+
+#historyPlot {
+    width: 90%; /* Adjust the width of the plot container */
+    margin: 0 auto; /* Center the plot horizontally within its container */
+    border: 2px solid green; /* Add a green border */
+    padding: 20px; /* Add padding around the container */
+}
+
+#header {
+    width: 90%; /* Adjust the width of the plot container */
+    margin: 0 auto; /* Center the plot horizontally within its container */
+    border: 2px solid green; /* Add a green border */
+    padding: 20px; /* Add padding around the container */
+}
+
+
+
+
+
+#divPlot {
+    width: 90%; /* Adjust the width of the dividend chart container */
+    margin: 0 auto; /* Center the dividend chart horizontally within its container */
+    border: 2px solid green; /* Add a green border */
+
+    padding: 20px; /* Add padding around the dividend chart container */
+    text-align: center; /* Center the content horizontally */
+    margin-top: 40px; /* Add some top margin for spacing */
+}
+
+
+#insHolderPieChart {
+    width: 90%; /* Adjust the width of the chart container */
+    margin: 0 auto; /* Center the chart horizontally within its container */
+    border: 2px solid green; /* Add a green border */
+    padding: 20px; /* Add padding around the chart container */
+    text-align: center; /* Center the content horizontally */
+    margin-top: 20px; /* Add some top margin for spacing */
+}
+
+
+#mutualFundHoldersPieChart {
+    width: 90%; /* Adjust the width of the chart container */
+    margin: 0 auto; /* Center the chart horizontally within its container */
+    border: 2px solid green; /* Add a green border */
+    padding: 20px; /* Add padding around the chart container */
+    text-align: center; /* Center the content horizontally */
+    margin-top: 20px; /* Add some top margin for spacing */
+}

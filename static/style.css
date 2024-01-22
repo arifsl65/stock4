@@ -1,0 +1,162 @@
+
+
+
+
+#logo {
+    margin-top: 10px;
+}
+
+#logo img {
+    width: 50px; 
+    height: 50px; 
+}
+
+
+
+#searchDiv {
+    border: 2px solid green;
+    padding: 10px; 
+    width: 100%;
+}
+
+h1{
+    position:relative;
+    text-align: center;
+    color:green;
+    border: 3px dashed green;
+    padding: 10px;
+} 
+
+
+
+.scroll-box {
+    
+    width: 700px;
+    height: 150px;
+    overflow-y: scroll;
+    overflow: auto;
+    padding:20px;
+}
+
+.scroll-box::-webkit-scrollbar {
+    width: 12px;
+    height: 10px;
+}
+
+.scroll-box::-webkit-scrollbar-thumb {
+    background-color:green;
+    border-radius: 6px; /* Optional: Round the corners of the thumb */
+}
+
+
+
+
+body {
+  
+    font-family: 'Courier New', Courier, monospace, sans-serif;
+    line-height: 1.6;
+    background-color: chocolate;
+  
+
+    background: 
+        /*url('/static/bull.jpeg') right bottom no-repeat;*/
+        url('/static/WallStreetBanner.jpeg') right top no-repeat,
+        url('/static/WallStreetBanner.jpeg') left bottom no-repeat;  
+
+
+    background-repeat: no-repeat;
+    background-size: 500px auto;
+    border: 3px dashed darkgreen   ;
+   
+} 
+
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+
+.tickerForm {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 70%;
+    padding: 10%;
+    position:relative;
+    text-align: center;
+}
+/* 
+.tickerForm label {
+    margin-bottom: 5px;
+} */
+
+#searchInput {
+    width: 50%;
+    padding: 8px;
+    align-items: center;
+}
+
+#searchOutput {
+    width: 100%;
+    padding: 8px;
+}
+
+/* 
+#companyList {
+    list-style: none;
+} */
+
+#companyList li {
+    cursor: pointer;
+    padding: 8px;
+    /* transition: background-color 0.3s; */
+}
+
+#companyList li:hover {
+    background-color: green;
+}
+
+.selected {
+    background-color:green;
+}
+
+
+#submitBtn{
+    font-size: 30px;
+    padding: 10px 24px;
+    border-radius: 12px;
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: bolder;
+    transition-duration: 0.4s;
+
+
+
+}
+
+#submitBtn:hover {
+    box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
+
+    background-color: #04AA6D;
+    /* Green */
+    color: white;
+
+}
+#searchDiv label {
+    display: block;
+    /* margin-bottom: 5px; */
+    font-weight: bold;
+    color: green;
+}
+
+#searchDiv input[type="text"] {
+    width: 70%;
+    height:40px;
+    padding: 3px;
+    box-sizing: border-box;
+    border-radius: 5px;
+}
+
+
+
+   

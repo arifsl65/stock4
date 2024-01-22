@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap">
+    <title>StockView</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style1.css') }}">
+</head>
+
+<body>
+
+    <div class="container">
+
+        
+        <div id="logo">
+            <a href="{{ url_for('home') }}">
+                <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo">
+            </a>
+        </div>
+        
+
+        <div id="header" class="chart-container">
+            <br>
+            <h1>{{ companyName | safe }}</h1>
+            <div>
+                <h3 id="liveDateTime"></h3>
+            </div>
+        </div>
+        <br><br>
+        <div>
+            <h2>Yearly Chart </h2>
+            <div id="historySection">
+                <div id="historyPlot"></div>
+            </div>
+        </div>
+        <br><br>
+    
+        <div id="infoSection">
+                <h2>company Info</h2>
+                {{ companyInfo | safe }}
+        </div>   
+        <br><br>
+        <div>
+            <h2>Historical Dividend  </h2>
+        <div id="divPlot"></div>
+        <br>
+        </div>
+        <br>
+        <br>
+        <div id="todaysSection">
+            <h2>Live Candlestick Chart</h2> 
+            <div id="todaysPlot">
+            </div>
+        </div>
+        <br>
+        <br>
+        <div>
+
+        <h2>Outstanding Shares Volume</h2> 
+        <div id="todaysVolume"></div>
+
+        </div>
+
+        <div id="holdersSection">
+            
+            <div>
+                <h2>Share Distribution</h2>
+                {{ majorHolders | safe }}
+                <br>
+            </div>
+            <br>
+            <div>
+                <h2>Institutional Holders Distribution</h2>
+    
+                {{ institutionalHolders | safe }}
+                <br>
+            </div>
+
+        </div>
+        <br>
+
+        <div>
+            <h2> Institutional Holder's Pie Chart</h2>
+    
+        <div id="insHolderPieChart"></div>
+        <br>
+
+        <div>
+            <h2> Mutual Fund Holder's Pie Chart</h2>
+            <div id="mutualFundHoldersPieChart"></div>
+
+        </div>
+
+        <br>
+    
+        <div id="newsSection">
+            <h2>News Headline</h2>
+            {{ newsData | safe }}
+        </div>
+        <br>
+
+         <div id="incomeStatement"> 
+            <h2>Income Statement</h2>
+
+            {{ incomeStmtJson | safe }}
+         </div> 
+    
+
+    </div>
+        
+    
+
+
+
+
+
+
+
+    <script>
+
+function updateDateTime() {
+var dateTimeElement = document.getElementById('liveDateTime');
+            var currentDateTime = new Date();
+            var formattedDateTime = currentDateTime.toLocaleString(); // Adjust the format as needed
+            dateTimeElement.textContent = 'Date and Time: ' + formattedDateTime;
+        }
+
+        updateDateTime();
+
+        setInterval(updateDateTime, 1000);
+
+var companyName = "{{ companyName | safe }}";
+var divName
+
+    
+function validateNotEmpty(variables, targetElementId,divName) {
+
+
+    for (const variable of variables) {
+        try {
+
+            console.log(divName)
+            let parsedVariable = variable;
+
+            // If it's a string, attempt to parse as JSON
+            if (typeof variable === 'string') {
+                parsedVariable = JSON.parse(variable);
+            }
+
+            // Check if parsedVariable is empty or invalid based on its type
+            if (parsedVariable === null || parsedVariable === undefined) {
+                const errorMessage = `There is no valid ${divName} data for ${companyName}`;
+                document.getElementById(targetElementId).innerHTML = errorMessage;
+                console.error(errorMessage);  // Log the error, but don't throw it
+                return false;  // Continue with the loop
+            }
+
+            if (Array.isArray(parsedVariable) && parsedVariable.length === 0) {
+                const errorMessage = `There is no valid ${divName} data for ${companyName}`;
+                document.getElementById(targetElementId).innerHTML = errorMessage;
+                console.error(errorMessage);
+                return false;
+            }
+
+            if (typeof parsedVariable === 'object' && Object.keys(parsedVariable).length === 0) {
+                const errorMessage =  `There is no valid ${divName} data for ${companyName}`;
+                document.getElementById(targetElementId).innerHTML = errorMessage;
+                console.error(errorMessage);
+                return false;
+            }
+        } catch (error) {
+            const errorMessage =  `There is no valid ${divName} data for ${companyName}`;
+            document.getElementById(targetElementId).innerHTML = errorMessage;
+            console.error(errorMessage);
+            return false;
+        }
+    }
+
+    return true;  // All checks passed, return true
+}
+
+
+
+      
+
+
+        // STOCK HISTORY
+var stockHistory = {{ stockHistory | safe }};
+
+async function stockHistoryChart() {
+    try {
+        var divName = 'Historical Chart';
+        var targetElementId = 'historyPlot';
+        validateNotEmpty(stockHistory, targetElementId, divName);
+
+        // Convert epoch timestamps to formatted dates
+        for (let i = 0; i < stockHistory.length; i++) {
+            const epochTimestamp = stockHistory[i].Date;
+            const date = new Date(epochTimestamp);
+            const formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+            stockHistory[i].Date = formattedDate;
+        }
+
+        // Extracting data for the scatter plot
+        const dates = stockHistory.map(entry => entry.Date);
+        const close = stockHistory.map(entry => entry.Close);
+
+        // Creating the scatter plot data
+        const stockHistoryData = [{
+            x: dates,
+            y: close,
+            type: "scatter",
+            mode: "lines"
+        }];
+
+        // Layout settings for the scatter plot, including a slider for the x-axis
+        const stockHistoryLayout = {
+            height: 700,
+            xaxis: {
+                showgrid: true,
+                gridcolor: 'green',
+                rangeslider: {  // Adding a rangeslider for the x-axis
+                    visible: true
+                },
+                type: 'date'  // Assuming the x-axis represents dates
+            },
+            yaxis: {
+                showgrid: true,
+                gridcolor: 'green'
+            },
+        };
+
+        // Render the scatter plot with the slider
+        await Plotly.newPlot("historyPlot", stockHistoryData, stockHistoryLayout);
+        console.log('History chart plotted successfully');
+
+    } catch (error) {
+        // Handle any errors that occur during chart rendering
+        console.error('History Chart Plot:', error);
+        document.getElementById('historyPlot').innerHTML = 'History Chart data is empty or invalid';
+    }
+}
+
+// Call the function to generate the historical chart with the slider
+stockHistoryChart();
+
+
+     // TODAYS CHART
+
+
+    // TODAYS CHART// TODAYS CHART
+    var df = {{ candleChart | safe }};
+// df=null
+async function todaysCandleChart() {
+    try {
+        var divName='Live Candle xChart';
+        var targetElementId = 'todaysPlot';
+        validateNotEmpty([df], targetElementId,divName);
+
+        if (df && df.length > 0) {
+            const dates = df.map(entry => entry.Datetime);
+            const opens = df.map(entry => entry.Open);
+            const highs = df.map(entry => entry.High);
+            const lows = df.map(entry => entry.Low);
+            const closes = df.map(entry => entry.Close);
+
+            const todaysChart = [{
+                x: dates,
+                open: opens,
+                high: highs,
+                low: lows,
+                close: closes,
+                type: "candlestick",
+            }];
+
+            const todaysChartLayout = {
+                height: 700,
+                width: 1100,
+                margin: {
+                    l: 40,  // left margin
+                    r: 40,  // right margin
+                    b: 40,  // bottom margin
+                    t: 40   // top margin
+                }
+            };
+
+            await Plotly.newPlot("todaysPlot", todaysChart, todaysChartLayout);
+            console.log('Todays Candelstick Chart plot rendered Succfully ');
+        } else {
+            // Handle the case where df is empty or invalid
+            document.getElementById(targetElementId).innerHTML = 'Todays Candelstick Chart data is empty or invalid';
+            console.error('Todays Candelstick Chart data is empty or invalid');
+        }
+    } catch (error) {
+        console.error('Todays Candelstick Chart Plot:', error);
+        document.getElementById(targetElementId).innerHTML = 'Todays Candelstick Chart data is empty or invalid';
+    }
+}
+
+todaysCandleChart();
+
+    
+
+        // YEARLY VOLUME
+
+        var VolumeData = {{ VolumeData | safe }};
+
+async function volumePlot() {
+    try {
+        var divName = 'Outstanding Volume';
+        var targetElementId = 'todaysVolume';
+        validateNotEmpty([VolumeData], targetElementId);
+
+        const dfVolume = VolumeData.map(entry => entry.Volume);
+        const dfDate = VolumeData.map(entry => entry.Date);
+
+        const todaysVolume = [{
+            x: dfDate,
+            y: dfVolume,
+            type: "bar",
+            orientation: 'v'
+        }];
+
+        const todaysChartVolumeLayout = {
+            height: 700,
+            xaxis: {
+                showgrid: true,
+                rangeslider: {  // Adding a rangeslider for the x-axis
+                    visible: true,
+                },
+            },
+            yaxis: {
+                showgrid: true,
+                gridcolor: 'green',
+            },
+        };
+
+        await Plotly.newPlot("todaysVolume", todaysVolume, todaysChartVolumeLayout);
+        console.log('Volume plot rendered successfully');
+    } catch (error) {
+        console.error('Error rendering Volume Plot:', error);
+        document.getElementById('todaysVolume').innerHTML = 'Volume data is empty or invalid';
+    }
+}
+
+volumePlot();
+
+      
+
+
+
+        // DIVIDEND
+        var dividend = {{ dividend | safe }};
+
+        async function dividendPlot() {
+                
+                try {       
+                            var divName='Dividend ';
+                            var targetElementId='divPlot';
+                            validateNotEmpty([dividend], targetElementId,divName);
+
+
+
+                            for (let i = 0; i < dividend.length; i++) {
+                                const epochTimestamp = dividend[i].Date;
+                                const date = new Date(epochTimestamp);
+                                const year = date.getFullYear();
+                                const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                                const day = date.getDate().toString().padStart(2, '0');
+                                const formattedDate = `${year}-${month}-${day}`;
+                                dividend[i].Date = formattedDate;
+                            }
+
+                            const dividendDate = dividend.map(entry => entry.Date);
+                            const dividendPrice = dividend.map(entry => entry.Dividends);
+
+                            const dividendData = [{
+                                x: dividendDate,
+                                y: dividendPrice,
+                                type: "bar",
+                                orientation: 'v'
+                            }];
+
+                            const dividendLayout = {
+                                xaxis: {
+                                    showgrid: true,
+                                    rangeslider: {  // Adding a rangeslider for the x-axis
+                                        visible: true,
+                                    },
+                                },
+                                yaxis: {
+                                    showgrid: true,
+                                    gridcolor: 'green',
+                                },
+                            };
+
+                            await Plotly.newPlot("divPlot", dividendData, dividendLayout);
+                            console.log('Dividend Plot rendered successfully.');
+                    } catch (error) {
+                        console.error('Error rendering Dividend Plot:', error);
+                        document.getElementById('divPlot').innerHTML='Dividend data is empty or invalid';
+
+                    }
+            }
+
+        dividendPlot();
+
+
+
+            // INSTITUIONAL HOLDERS PIE
+            var institutionalHoldersPie = {{ institutionalHoldersPie | tojson | safe }};
+
+            async function renderInstitutionalHoldersPieChart() 
+            {
+
+                try{
+                
+
+                var divName='Intitutional pie chart ';
+                var targetElementId='insHolderPieChart';
+                validateNotEmpty([institutionalHoldersPie], targetElementId,divName);
+
+                const holders = institutionalHoldersPie.map(entry => entry.Holders);
+                const values = institutionalHoldersPie.map(entry => entry.Value);
+
+                const institutionalHoldersPieData = {
+                    labels: holders,
+                    values: values,
+                    type: 'pie'
+                };
+
+                const institutionalHoldersPieLayout = {
+                    width: 800,
+                    height: 600
+                };
+
+                await Plotly.newPlot('insHolderPieChart', [institutionalHoldersPieData], institutionalHoldersPieLayout);
+                console.log('Institutional Holder Pie Rendered Successfully');
+                    }   
+                catch (error)  {
+                console.error('Error rendering Institutional Holder Pie Chart:', error);
+                document.getElementById('insHolderPieChart').innerHTML='Institutional Holder data is empty or invalid';
+                         }
+            }
+
+
+        renderInstitutionalHoldersPieChart()
+
+
+
+
+        // MUTUAL FUND HOLDERS PIE
+
+        var mutualFundHoldersPie = {{ mutualFundHoldersPie | tojson | safe }};
+
+        async function renderMutualFundHoldersPieChart() {
+
+            try{  
+
+                    var divName='Mutual Fund Holder pie chart ';
+                    var targetElementId='mutualFundHoldersPieChart';
+                    validateNotEmpty([mutualFundHoldersPie], targetElementId,divName);
+                    
+                    const MutalHolders = mutualFundHoldersPie.map(entry => entry.Holders);
+                    const MutalValues = mutualFundHoldersPie.map(entry => entry.Value);
+
+                    const mutualFundHoldersPieData = {
+                        labels: MutalHolders,
+                        values: MutalValues,
+                        type: 'pie'
+                    };
+
+                    const mutualFundHoldersPieLayout = {
+                        width:1000,
+                        height:600
+                    };
+
+            await Plotly.newPlot('mutualFundHoldersPieChart', [mutualFundHoldersPieData], mutualFundHoldersPieLayout);
+            console.log('Mutual Fund Holder Pie Chart rendered successfully');
+            
+                }   
+            catch (error)  {
+                console.error('Error rendering Institutional Holder Pie Chart:', error);
+                document.getElementById('mutualFundHoldersPieChart').innerHTML='Mutual Fund Holder data is empty or invalid';
+                         }
+             }
+
+    renderMutualFundHoldersPieChart()
+
+
+    </script>
+
+
+
+</body>
+
+</html>
